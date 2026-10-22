@@ -1,0 +1,60 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
+      # Ключ для Google Play: секреты WK_KEYSTORE_BASE64, WK_KEYSTORE_PASSWORD, WK_KEY_ALIAS, WK_KEY_PASSWORD.
+      # Без них сборка подписывается тестовым ключом (годится только для проверки на устройстве).
+      - name: Signing key
+        env:
+          KS_B64: ${{ secrets.WK_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+            echo "WK_KEYSTORE_FILE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+            echo "SIGNED=play" >> "$GITHUB_ENV"
+          else
+            echo "SIGNED=test" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build APK and AAB
+        env:
+          WK_KEYSTORE_PASSWORD: ${{ secrets.WK_KEYSTORE_PASSWORD }}
+          WK_KEY_ALIAS: ${{ secrets.WK_KEY_ALIAS }}
+          WK_KEY_PASSWORD: ${{ secrets.WK_KEY_PASSWORD }}
+        run: gradle --no-daemon assembleRelease bundleRelease
+
+      - name: Rename
+        run: |
+          mkdir -p out/apk out/aab
+          cp app/build/outputs/apk/release/app-release.apk "out/apk/webkiosko-0.1.${GITHUB_RUN_NUMBER}-${SIGNED}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "out/aab/webkiosko-0.1.${GITHUB_RUN_NUMBER}-${SIGNED}.aab"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: webkiosko-apk
+          path: out/apk/*.apk
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: webkiosko-aab
+          path: out/aab/*.aab
+          retention-days: 30

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Значок: экран на подставке с замком -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M34,32h40a4,4 0,0 1,4 4v26a4,4 0,0 1,-4 4H34a4,4 0,0 1,-4 -4V36a4,4 0,0 1,4 -4z" />
+    <path android:fillColor="#1F3A5F"
+        android:pathData="M35,37h38v24H35z" />
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M51,66h6v8h-6z" />
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M43,74h22a2,2 0,0 1,0 4H43a2,2 0,0 1,0 -4z" />
+    <path android:fillColor="#14A098"
+        android:pathData="M48,49h12a1.5,1.5 0,0 1,1.5 1.5v7a1.5,1.5 0,0 1,-1.5 1.5H48a1.5,1.5 0,0 1,-1.5 -1.5v-7a1.5,1.5 0,0 1,1.5 -1.5z" />
+    <path android:strokeColor="#14A098" android:strokeWidth="2" android:fillColor="#00000000"
+        android:pathData="M50.5,49v-3a3.5,3.5 0,0 1,7 0v3" />
+</vector>
